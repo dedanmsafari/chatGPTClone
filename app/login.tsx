@@ -113,7 +113,7 @@ const login = () => {
         style={styles.logo}
       />
 
-      <Text style={styles.title}>
+      <Text style={[styles.title]}>
         {type === "login" ? "Welcome Back" : "Create your account"}
       </Text>
 
@@ -187,13 +187,14 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     alignSelf: "center",
-    marginVertical: 80,
+    marginTop: 80,
+    marginBottom: 50,
   },
   title: {
     fontSize: 30,
     marginBottom: 20,
-    fontWeight: "bold",
     alignSelf: "center",
+    fontFamily: "PlaywritePL-Regular",
   },
   inputField: {
     marginVertical: 4,

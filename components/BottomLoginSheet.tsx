@@ -1,4 +1,10 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { defaultStyles } from "@/constants/Styles";
@@ -78,10 +84,18 @@ const styles = StyleSheet.create({
   btnLightText: {
     color: "#000",
     fontSize: 20,
+    fontFamily: Platform.select({
+      android: "Ubuntu_500Medium",
+      ios: "Ubuntu-Medium",
+    }),
   },
   btnDarkText: {
     color: "#fff",
     fontSize: 20,
+    fontFamily: Platform.select({
+      android: "Ubuntu_500Medium",
+      ios: "Ubuntu-Medium",
+    }),
   },
   btnOutline: {
     borderWidth: 3,
