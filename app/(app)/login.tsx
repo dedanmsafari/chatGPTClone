@@ -73,7 +73,7 @@ const login = () => {
           onPress={async () => {
             const result = await signIn(emailAddress, password);
             if (result) {
-              router.replace("/(root)");
+              router.replace("/(root)/(drawer)");
             }
           }}
         >
@@ -105,7 +105,7 @@ const login = () => {
             onPress={async () => {
               const result = await verify(code);
               if (result) {
-                router.replace("/(root)");
+                router.replace("/(root)/(drawer)");
               }
             }}
           >

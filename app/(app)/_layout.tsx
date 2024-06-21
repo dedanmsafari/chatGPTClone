@@ -10,7 +10,7 @@ export { ErrorBoundary } from "@/utils/errorBoundary";
 export default function InitialLayout() {
   const { session, isLoading, setPendingVerification } = useSession();
   if (session) {
-    return <Redirect href="/(root)" />;
+    return <Redirect href="/(root)/(drawer)/(chat)/new" />;
   }
 
   if (isLoading) {
