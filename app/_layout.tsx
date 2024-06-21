@@ -1,44 +1,21 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Stack, router, SplashScreen } from "expo-router";
-import { TouchableOpacity } from "react-native";
-import { ClerkProvider } from "@clerk/clerk-expo";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import Constants from "expo-constants";
-
+import SessionProvider from "@/context/authContext";
 import tokenCache from "@/utils/clerkTokenCache";
-export { ErrorBoundary } from "@/utils/errorBoundary";
+import { ClerkProvider } from "@clerk/clerk-expo";
+import Constants from "expo-constants";
+import { Slot } from "expo-router";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-function InitialLayout() {
-  return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="login"
-        options={{
-          title: "",
-          presentation: "modal",
-
-          headerTitleStyle: { fontFamily: "mon-sb" },
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons name="close-outline" size={28} />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-    </Stack>
-  );
-}
-
-export default function RootLayOut() {
+export default function RootLayout() {
   return (
     <ClerkProvider
       publishableKey={Constants.expoConfig?.extra?.clerkPublishableKey}
       tokenCache={tokenCache}
     >
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <InitialLayout />
-      </GestureHandlerRootView>
+      <SessionProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <Slot />
+        </GestureHandlerRootView>
+      </SessionProvider>
     </ClerkProvider>
   );
 }
