@@ -4,16 +4,10 @@ import { createContext } from "@/utils/context";
 import { useStorageState } from "@/utils/useStorageState";
 
 type AuthProps = {
-  signIn: () => Promise<boolean | null>;
+  signIn: (emailAddress: string, password: string) => Promise<boolean | null>;
   signOut: () => void;
-  register: () => void;
-  verify: () => Promise<boolean | null>;
-  emailAddress: string;
-  code: string;
-  password: string;
-  setEmailAddress: Dispatch<SetStateAction<string>>;
-  setPassWord: Dispatch<SetStateAction<string>>;
-  setCode: Dispatch<SetStateAction<string>>;
+  register: (emailAddress: string, password: string) => void;
+  verify: (code: string) => Promise<boolean | null>;
   setPendingVerification: Dispatch<SetStateAction<boolean>>;
   session?: string | null;
   isLoading: boolean;
@@ -32,14 +26,10 @@ const SessionProvider = ({ children }: PropsWithChildren) => {
   const [pendingVerification, setPendingVerification] = useState(false);
   const [loading, setloading] = useState(false);
 
-  const [emailAddress, setEmailAddress] = useState("");
-  const [password, setPassWord] = useState("");
-  const [code, setCode] = useState("");
-
   const onSignUp = useSignUp();
   const onSignIn = useSignIn();
 
-  const onRegister = async () => {
+  const onRegister = async (emailAddress: string, password: string) => {
     setloading(true);
     if (!onSignUp.isLoaded) {
       return;
@@ -63,7 +53,7 @@ const SessionProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  const onVerify = async () => {
+  const onVerify = async (code: string) => {
     setloading(true);
     if (!onSignUp.isLoaded) {
       return null;
@@ -88,7 +78,7 @@ const SessionProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  const SignIn = async () => {
+  const SignIn = async (emailAddress: string, password: string) => {
     setloading(true);
     if (!onSignIn.isLoaded) {
       return false;
@@ -128,12 +118,6 @@ const SessionProvider = ({ children }: PropsWithChildren) => {
     isLoading,
     loading,
     pendingVerification,
-    emailAddress,
-    code,
-    password,
-    setEmailAddress,
-    setPassWord,
-    setCode,
     setPendingVerification,
   };
 

@@ -20,19 +20,12 @@ import { useSession } from "@/context/authContext";
 const login = () => {
   const { type = "login" } = useLocalSearchParams<{ type: string }>();
 
-  const {
-    pendingVerification,
-    register,
-    signIn,
-    verify,
-    loading,
-    emailAddress,
-    code,
-    password,
-    setEmailAddress,
-    setPassWord,
-    setCode,
-  } = useSession();
+  const { pendingVerification, register, signIn, verify, loading } =
+    useSession();
+
+  const [emailAddress, setEmailAddress] = useState("");
+  const [password, setPassWord] = useState("");
+  const [code, setCode] = useState("");
 
   return (
     <KeyboardAvoidingView
@@ -78,7 +71,7 @@ const login = () => {
         <TouchableOpacity
           style={[defaultStyles.btn, styles.btnPrimary]}
           onPress={async () => {
-            const result = await signIn();
+            const result = await signIn(emailAddress, password);
             if (result) {
               router.replace("/(root)");
             }
@@ -91,7 +84,7 @@ const login = () => {
       {type === "register" && !pendingVerification ? (
         <TouchableOpacity
           style={[defaultStyles.btn, styles.btnPrimary]}
-          onPress={register}
+          onPress={() => register(emailAddress, password)}
         >
           <Text style={styles.btnPrimaryText}>Create Account</Text>
         </TouchableOpacity>
@@ -110,7 +103,7 @@ const login = () => {
           <TouchableOpacity
             style={[defaultStyles.btn, styles.btnPrimary]}
             onPress={async () => {
-              const result = await verify();
+              const result = await verify(code);
               if (result) {
                 router.replace("/(root)");
               }
