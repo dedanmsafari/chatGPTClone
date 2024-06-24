@@ -19,6 +19,7 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import { TextInput } from "react-native-gesture-handler";
+import HeaderDropDown from "@/components/HeaderDropDown";
 
 export const CustomDrawerContent = (props: any) => {
   const insets = useSafeAreaInsets();
@@ -112,13 +113,11 @@ const _layout = () => {
       }}
     >
       <Drawer.Screen
-        name="(chat)"
+        name="(chat)/new"
         getId={() => String(Date.now())}
         options={{
           drawerLabel: "ChatGPT",
-
           title: "ChatGPT",
-
           drawerIcon: () => (
             <View style={[styles.item, { backgroundColor: "#000" }]}>
               <Image
@@ -143,14 +142,13 @@ const _layout = () => {
       />
       <Drawer.Screen
         name="dalle"
-        getId={() => String(Date.now())}
         options={{
           drawerLabel: "DALL · E",
 
           title: "Generate Images",
 
           drawerIcon: () => (
-            <View style={[styles.item, { backgroundColor: "#000" }]}>
+            <View style={styles.item}>
               <Image
                 source={require("@/assets/images/dalle.png")}
                 style={styles.dalleImage}
