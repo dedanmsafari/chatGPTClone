@@ -1,10 +1,16 @@
 import { View, Text } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
+import { defaultStyles } from "@/constants/Styles";
+import { Stack } from "expo-router";
 
 const Settings = () => {
   return (
-    <View>
-      <Text>Modal Index</Text>
+    <View style={defaultStyles.pageContainer}>
+      <Stack.Screen
+        options={{
+          headerTitle: "Chat",
+        }}
+      />
     </View>
   );
 };
