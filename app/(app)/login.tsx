@@ -73,7 +73,7 @@ const login = () => {
           onPress={async () => {
             const result = await signIn(emailAddress, password);
             if (result) {
-              router.replace("/(root)/(drawer)");
+              router.replace("/(root)/(drawer)/(chat)/new");
             }
           }}
         >
