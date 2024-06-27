@@ -21,7 +21,70 @@ import ChatMessage from "@/components/ChatMessage";
 
 const DUMMY_MESSAGES: Message[] = [
   {
-    content: "Hello, how can i help you today?",
+    content: "Hello, how can i help you today?Hello, how can i help you today?",
+    role: Role.Bot,
+  },
+  {
+    content:
+      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
+    role: Role.User,
+  },
+  {
+    content: "Hello, how can i help you today?Hello, how can i help you today?",
+    role: Role.Bot,
+  },
+  {
+    content:
+      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
+    role: Role.User,
+  },
+  {
+    content: "Hello, how can i help you today?Hello, how can i help you today?",
+    role: Role.Bot,
+  },
+  {
+    content:
+      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
+    role: Role.User,
+  },
+  {
+    content: "Hello, how can i help you today?Hello, how can i help you today?",
+    role: Role.Bot,
+  },
+  {
+    content:
+      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
+    role: Role.User,
+  },
+  {
+    content: "Hello, how can i help you today?Hello, how can i help you today?",
+    role: Role.Bot,
+  },
+  {
+    content:
+      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
+    role: Role.User,
+  },
+  {
+    content: "Hello, how can i help you today?Hello, how can i help you today?",
+    role: Role.Bot,
+  },
+  {
+    content:
+      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
+    role: Role.User,
+  },
+  {
+    content: "Hello, how can i help you today?Hello, how can i help you today?",
+    role: Role.Bot,
+  },
+  {
+    content:
+      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
+    role: Role.User,
+  },
+  {
+    content: "Hello, how can i help you today?Hello, how can i help you today?",
     role: Role.Bot,
   },
   {
@@ -77,6 +140,11 @@ const Page = () => {
           data={DUMMY_MESSAGES}
           renderItem={({ item }) => <ChatMessage {...item} />}
           estimatedItemSize={400}
+          contentContainerStyle={{
+            paddingTop: 30,
+            paddingBottom: 150,
+          }}
+          keyboardDismissMode="on-drag"
         />
       </View>
       <KeyboardAvoidingView
