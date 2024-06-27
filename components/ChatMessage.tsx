@@ -36,17 +36,12 @@ const styles = StyleSheet.create({
   ImageContainer: {
     backgroundColor: "#000",
     overflow: "hidden",
-    borderRadius: 20,
-    height: 30,
-    width: 30,
-    alignItems: "center",
-    justifyContent: "center",
+    borderRadius: 15,
   },
   BotImage: {
-    height: 20,
-    width: 20,
-    borderRadius: 15,
-    backgroundColor: "#000",
+    height: 16,
+    width: 16,
+    margin: 6,
   },
   UserImage: {
     height: 30,
