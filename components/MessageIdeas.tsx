@@ -39,8 +39,12 @@ const MessageIdeas = ({ onSelectCard }: MessageProp) => {
             style={styles.card}
             onPress={() => onSelectCard(`${message.title} ${message.text}`)}
           >
-            <Text>{message.title}</Text>
-            <Text>{message.text}</Text>
+            <Text style={{ fontSize: 16, fontWeight: 500 }}>
+              {message.title}
+            </Text>
+            <Text style={{ fontSize: 14, color: Colors.grey }}>
+              {message.text}
+            </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
