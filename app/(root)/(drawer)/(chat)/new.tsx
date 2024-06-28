@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { defaultStyles } from "@/constants/Styles";
-import { Stack, useNavigation } from "expo-router";
+import { Redirect, Stack, useNavigation } from "expo-router";
 
 import HeaderDropDown from "@/components/HeaderDropDown";
 import MessageInput from "@/components/MessageInput";
@@ -19,70 +19,10 @@ import { Message, Role } from "@/utils/types";
 import { FlashList } from "@shopify/flash-list";
 import ChatMessage from "@/components/ChatMessage";
 
+import { useMMKVString } from "react-native-mmkv";
+import { Storage } from "@/utils/mmkvStorage";
+
 const DUMMY_MESSAGES: Message[] = [
-  {
-    content: "Hello, how can i help you today?Hello, how can i help you today?",
-    role: Role.Bot,
-  },
-  {
-    content:
-      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
-    role: Role.User,
-  },
-  {
-    content: "Hello, how can i help you today?Hello, how can i help you today?",
-    role: Role.Bot,
-  },
-  {
-    content:
-      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
-    role: Role.User,
-  },
-  {
-    content: "Hello, how can i help you today?Hello, how can i help you today?",
-    role: Role.Bot,
-  },
-  {
-    content:
-      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
-    role: Role.User,
-  },
-  {
-    content: "Hello, how can i help you today?Hello, how can i help you today?",
-    role: Role.Bot,
-  },
-  {
-    content:
-      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
-    role: Role.User,
-  },
-  {
-    content: "Hello, how can i help you today?Hello, how can i help you today?",
-    role: Role.Bot,
-  },
-  {
-    content:
-      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
-    role: Role.User,
-  },
-  {
-    content: "Hello, how can i help you today?Hello, how can i help you today?",
-    role: Role.Bot,
-  },
-  {
-    content:
-      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
-    role: Role.User,
-  },
-  {
-    content: "Hello, how can i help you today?Hello, how can i help you today?",
-    role: Role.Bot,
-  },
-  {
-    content:
-      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
-    role: Role.User,
-  },
   {
     content: "Hello, how can i help you today?Hello, how can i help you today?",
     role: Role.Bot,
@@ -95,9 +35,16 @@ const DUMMY_MESSAGES: Message[] = [
 ];
 
 const Page = () => {
-  const [gptVersion, setGptVersion] = useState("3.5");
-  const [messages, setMessages] = useState<Message[]>(DUMMY_MESSAGES);
+  const [gptVersion, setGptVersion] = useMMKVString("3.5", Storage);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [height, setHeight] = useState(0);
+
+  const [key, setKey] = useMMKVString("apiKey", Storage);
+  const [organization, setOrganization] = useMMKVString("org", Storage);
+
+  if (!key || key === "" || !organization || organization === "") {
+    return <Redirect href="/(root)/(modal)/settings" />;
+  }
 
   const getCompletion = (message: string) => {
     console.log("Completion message :", message);
@@ -137,7 +84,7 @@ const Page = () => {
         )}
 
         <FlashList
-          data={DUMMY_MESSAGES}
+          data={messages}
           renderItem={({ item }) => <ChatMessage {...item} />}
           estimatedItemSize={400}
           contentContainerStyle={{
