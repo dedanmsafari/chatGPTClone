@@ -8,7 +8,7 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { defaultStyles } from "@/constants/Styles";
 import { Redirect, Stack, useNavigation } from "expo-router";
 
@@ -22,17 +22,7 @@ import ChatMessage from "@/components/ChatMessage";
 import { useMMKVString } from "react-native-mmkv";
 import { Storage } from "@/utils/mmkvStorage";
 
-const DUMMY_MESSAGES: Message[] = [
-  {
-    content: "Hello, how can i help you today?Hello, how can i help you today?",
-    role: Role.Bot,
-  },
-  {
-    content:
-      "I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.I need help with my React Native app.",
-    role: Role.User,
-  },
-];
+import OpenAI from "react-native-openai";
 
 const Page = () => {
   const [gptVersion, setGptVersion] = useMMKVString("3.5", Storage);
@@ -47,7 +37,22 @@ const Page = () => {
   }
 
   const getCompletion = (message: string) => {
-    console.log("Completion message :", message);
+    setMessages([
+      ...messages,
+      { role: Role.User, content: message },
+      { role: Role.Bot, content: "" },
+    ]);
+
+    //send a message.
+    openAI.chat.stream({
+      messages: [
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+      model: gptVersion === "4" ? "gpt-4" : "gpt-3.5-turbo",
+    });
   };
 
   const onLayout = (event: any) => {
@@ -55,6 +60,41 @@ const Page = () => {
 
     setHeight(height);
   };
+
+  const openAI = useMemo(
+    () =>
+      new OpenAI({
+        apiKey: key,
+        organization: organization,
+      }),
+    []
+  );
+
+  useEffect(() => {
+    const handleNewMessage = (payload: any) => {
+      setMessages((messages) => {
+        const newMessage = payload.choices[0]?.delta.content;
+        if (newMessage) {
+          messages[messages.length - 1].content += newMessage;
+
+          return [...messages];
+        }
+
+        if (payload.choices[0]?.finishReason) {
+          //Save last message
+        }
+
+        return messages;
+      });
+    };
+
+    //listen for messages
+    openAI.chat.addListener("onChatMessageReceived", handleNewMessage);
+
+    return () => {
+      openAI.chat.removeListener("onChatMessageReceived");
+    };
+  }, [openAI]);
 
   return (
     <View style={defaultStyles.pageContainer}>

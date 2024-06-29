@@ -114,7 +114,7 @@ const _layout = () => {
     >
       <Drawer.Screen
         name="(chat)/new"
-        getId={() => String(Date.now())}
+        getId={() => Math.random().toString()}
         options={{
           drawerLabel: "ChatGPT",
           title: "ChatGPT",
