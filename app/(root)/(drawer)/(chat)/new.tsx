@@ -32,11 +32,46 @@ const Page = () => {
   const [key, setKey] = useMMKVString("apiKey", Storage);
   const [organization, setOrganization] = useMMKVString("org", Storage);
 
-  if (!key || key === "" || !organization || organization === "") {
-    return <Redirect href="/(root)/(modal)/settings" />;
-  }
+  const openAI = useMemo(
+    () =>
+      new OpenAI({
+        apiKey: key,
+        organization,
+      }),
+    []
+  );
+
+  useEffect(() => {
+    const handleNewMessage = (payload: any) => {
+      setMessages((messages) => {
+        const newMessage = payload.choices[0]?.delta.content;
+        if (newMessage) {
+          messages[messages.length - 1].content += newMessage;
+
+          return [...messages];
+        }
+
+        if (payload.choices[0]?.finishReason) {
+          //Save last message to the DB
+        }
+
+        return messages;
+      });
+    };
+
+    //listen for messages
+    openAI.chat.addListener("onChatMessageReceived", handleNewMessage);
+
+    return () => {
+      openAI.chat.removeListener("onChatMessageReceived");
+    };
+  }, [openAI]);
 
   const getCompletion = (message: string) => {
+    if (messages.length === 0) {
+      // Create chat later,store to DB
+    }
+
     setMessages([
       ...messages,
       { role: Role.User, content: message },
@@ -61,40 +96,9 @@ const Page = () => {
     setHeight(height);
   };
 
-  const openAI = useMemo(
-    () =>
-      new OpenAI({
-        apiKey: key,
-        organization: organization,
-      }),
-    []
-  );
-
-  useEffect(() => {
-    const handleNewMessage = (payload: any) => {
-      setMessages((messages) => {
-        const newMessage = payload.choices[0]?.delta.content;
-        if (newMessage) {
-          messages[messages.length - 1].content += newMessage;
-
-          return [...messages];
-        }
-
-        if (payload.choices[0]?.finishReason) {
-          //Save last message
-        }
-
-        return messages;
-      });
-    };
-
-    //listen for messages
-    openAI.chat.addListener("onChatMessageReceived", handleNewMessage);
-
-    return () => {
-      openAI.chat.removeListener("onChatMessageReceived");
-    };
-  }, [openAI]);
+  if (!key || key === "" || !organization || organization === "") {
+    return <Redirect href="/(root)/(modal)/settings" />;
+  }
 
   return (
     <View style={defaultStyles.pageContainer}>
