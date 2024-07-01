@@ -25,8 +25,18 @@ import { Storage } from "@/utils/mmkvStorage";
 import OpenAI from "react-native-openai";
 import Colors from "@/constants/Colors";
 
+const dummyMessages = [
+  {
+    role: Role.Bot,
+    content: "",
+    imageUrl: "https://galaxies.dev/img/meerkat_2.jpg",
+    prompt:
+      "A meerkat astronaut in a futuristic spacesuit, standing upright on a rocky, alien landscape resembling the surface of Mars. The spacesuit is highly detailed with reflective visor and intricate life-support systems. The background shows a distant starry sky and a small Earth visible in the far horizon. The meerkat looks curious and brave, embodying the spirit of exploration.",
+  },
+];
+
 const Page = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(dummyMessages);
   const [height, setHeight] = useState(0);
 
   const [key, setKey] = useMMKVString("apiKey", Storage);
@@ -51,6 +61,7 @@ const Page = () => {
     //send a message.
     const result = await openAI.image.create({
       prompt: message,
+      n: 3,
     });
 
     if (result.data && result.data.length > 0) {
@@ -169,6 +180,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
     fontSize: 16,
+    color: Colors.grey,
     fontFamily: Platform.select({
       android: "Ubuntu_400Regular",
       ios: "Ubuntu-Regular",
