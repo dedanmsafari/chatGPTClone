@@ -26,15 +26,16 @@ import OpenAI from "react-native-openai";
 import Colors from "@/constants/Colors";
 
 const Page = () => {
-  const [gptVersion, setGptVersion] = useMMKVString("3.5", Storage);
   const [messages, setMessages] = useState<Message[]>([]);
   const [height, setHeight] = useState(0);
 
   const [key, setKey] = useMMKVString("apiKey", Storage);
   const [organization, setOrganization] = useMMKVString("org", Storage);
+  const [working, setWorking] = useState(false);
 
   const openAI = useMemo(
     () =>
+      // @ts-ignore
       new OpenAI({
         apiKey: key,
         organization,
@@ -42,53 +43,25 @@ const Page = () => {
     []
   );
 
-  useEffect(() => {
-    const handleNewMessage = (payload: any) => {
-      setMessages((messages) => {
-        const newMessage = payload.choices[0]?.delta.content;
-        if (newMessage) {
-          messages[messages.length - 1].content += newMessage;
+  const getCompletion = async (message: string) => {
+    setWorking(true);
 
-          return [...messages];
-        }
-
-        if (payload.choices[0]?.finishReason) {
-          //Save last message to the DB
-        }
-
-        return messages;
-      });
-    };
-
-    //listen for messages
-    openAI.chat.addListener("onChatMessageReceived", handleNewMessage);
-
-    return () => {
-      openAI.chat.removeListener("onChatMessageReceived");
-    };
-  }, [openAI]);
-
-  const getCompletion = (message: string) => {
-    if (messages.length === 0) {
-      // Create chat later,store to DB
-    }
-
-    setMessages([
-      ...messages,
-      { role: Role.User, content: message },
-      { role: Role.Bot, content: "" },
-    ]);
+    setMessages([...messages, { role: Role.User, content: message }]);
 
     //send a message.
-    openAI.chat.stream({
-      messages: [
-        {
-          role: "user",
-          content: message,
-        },
-      ],
-      model: gptVersion === "4" ? "gpt-4" : "gpt-3.5-turbo",
+    const result = await openAI.image.create({
+      prompt: message,
     });
+
+    if (result.data && result.data.length > 0) {
+      const imageUrl = result.data[0].url;
+      setMessages((prev) => [
+        ...prev,
+        { role: Role.Bot, content: "", imageUrl, prompt: message },
+      ]);
+    }
+
+    setWorking(false);
   };
 
   const onLayout = (event: any) => {
@@ -148,6 +121,15 @@ const Page = () => {
             paddingBottom: 150,
           }}
           keyboardDismissMode="on-drag"
+          ListFooterComponent={
+            <>
+              {working && (
+                <ChatMessage
+                  {...{ role: Role.Bot, content: "", loading: true }}
+                />
+              )}
+            </>
+          }
         />
       </View>
       <KeyboardAvoidingView
@@ -160,7 +142,6 @@ const Page = () => {
           width: "100%",
         }}
       >
-        {messages.length === 0 && <MessageIdeas onSelectCard={getCompletion} />}
         <MessageInput onShouldSendMessage={getCompletion} />
       </KeyboardAvoidingView>
     </View>

@@ -34,6 +34,7 @@ const Page = () => {
 
   const openAI = useMemo(
     () =>
+      // @ts-ignore
       new OpenAI({
         apiKey: key,
         organization,
