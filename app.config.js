@@ -49,6 +49,14 @@ module.exports = {
         ],
       },
     ],
+    [
+      "expo-media-library",
+      {
+        photosPermission: "Allow ASKMYAI to access your photos.",
+        savePhotosPermission: "Allow ASKMYAI to save photos.",
+        isAccessMediaLocationEnabled: true,
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,
