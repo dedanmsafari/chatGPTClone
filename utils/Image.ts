@@ -68,9 +68,9 @@ export async function copyImageToClipboard(imageUrl: string) {
 
 export async function shareImage(imageUrl: string) {
   let fileUri = FileSystem.documentDirectory + `${new Date().getTime()}.jpg`;
-
   try {
     const res = await FileSystem.downloadAsync(imageUrl, fileUri);
+
     return Sharing.shareAsync(res.uri);
   } catch (err) {
     console.log("Error Sharing Image:", err);
