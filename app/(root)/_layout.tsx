@@ -39,6 +39,30 @@ const AppLayout = () => {
             ),
         }}
       />
+      <Stack.Screen
+        name="(modal)/Image/[url]"
+        options={{
+          presentation: "fullScreenModal",
+          headerTitle: "",
+          headerBlurEffect: "dark",
+          headerTransparent: true,
+
+          headerTitleAlign: "center",
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: "rgba(0,0,0,0.4)" },
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{
+                borderRadius: 20,
+                padding: 4,
+              }}
+            >
+              <Ionicons name="close-outline" size={28} color={"#fff"} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
     </Stack>
   );
 };
