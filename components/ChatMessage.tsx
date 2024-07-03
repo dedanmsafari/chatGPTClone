@@ -16,6 +16,7 @@ import {
   downloadAndSaveImage,
   shareImage,
 } from "@/utils/Image";
+import { Link } from "expo-router";
 
 const ChatMessage = ({
   role,
@@ -66,13 +67,20 @@ const ChatMessage = ({
         <>
           {content === "" && imageUrl ? (
             <ContextMenu.Root>
-              <ContextMenu.Trigger action="press">
-                <Pressable>
-                  <Image
-                    source={{ uri: imageUrl }}
-                    style={styles.previewImage}
-                  />
-                </Pressable>
+              <ContextMenu.Trigger action="longPress">
+                <Link
+                  href={`/(root)/(modal)/Image/${encodeURIComponent(
+                    imageUrl
+                  )}?prompt=${encodeURIComponent(prompt!)}`}
+                  asChild
+                >
+                  <Pressable>
+                    <Image
+                      source={{ uri: imageUrl }}
+                      style={styles.previewImage}
+                    />
+                  </Pressable>
+                </Link>
               </ContextMenu.Trigger>
               <ContextMenu.Content
                 loop={false}
