@@ -8,9 +8,15 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { defaultStyles } from "@/constants/Styles";
-import { Redirect, Stack, useNavigation } from "expo-router";
+import {
+  Redirect,
+  Stack,
+  useLocalSearchParams,
+  useNavigation,
+} from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 
 import HeaderDropDown from "@/components/HeaderDropDown";
 import MessageInput from "@/components/MessageInput";
@@ -23,6 +29,7 @@ import { useMMKVString } from "react-native-mmkv";
 import { Storage } from "@/utils/mmkvStorage";
 
 import OpenAI from "react-native-openai";
+import { addChat, addMessage } from "@/utils/Database";
 
 const Page = () => {
   const [gptVersion, setGptVersion] = useMMKVString("3.5", Storage);
@@ -31,6 +38,17 @@ const Page = () => {
 
   const [key, setKey] = useMMKVString("apiKey", Storage);
   const [organization, setOrganization] = useMMKVString("org", Storage);
+
+  const db = useSQLiteContext();
+  let { id } = useLocalSearchParams<{ id: string }>();
+
+  const [chatId, _setChatId] = useState(id);
+  const chatIdRef = useRef(chatId);
+
+  function setChatId(id: string) {
+    chatIdRef.current = id;
+    _setChatId(id);
+  }
 
   const openAI = useMemo(
     () =>
@@ -54,6 +72,11 @@ const Page = () => {
 
         if (payload.choices[0]?.finishReason) {
           //Save last message to the DB
+
+          addMessage(db, parseInt(chatIdRef.current!), {
+            content: messages[messages.length - 1].content,
+            role: Role.Bot,
+          });
         }
 
         return messages;
@@ -71,6 +94,11 @@ const Page = () => {
   const getCompletion = (message: string) => {
     if (messages.length === 0) {
       // Create chat later,store to DB
+      addChat(db, message).then((res) => {
+        const chatID = res.lastInsertRowId;
+        setChatId(chatID.toString());
+        addMessage(db, chatID, { content: message, role: Role.User });
+      });
     }
 
     setMessages([
