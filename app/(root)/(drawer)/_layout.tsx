@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Drawer } from "expo-router/drawer";
 import {
   View,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Platform,
   useWindowDimensions,
+  Keyboard,
 } from "react-native";
 import { Link, useNavigation } from "expo-router";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
@@ -17,12 +18,21 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   DrawerContentScrollView,
   DrawerItemList,
+  useDrawerStatus,
 } from "@react-navigation/drawer";
 import { TextInput } from "react-native-gesture-handler";
-import HeaderDropDown from "@/components/HeaderDropDown";
 
 export const CustomDrawerContent = (props: any) => {
   const insets = useSafeAreaInsets();
+
+  const isDrawerOpen = useDrawerStatus() === "open";
+
+  useEffect(() => {
+    if (isDrawerOpen) {
+      console.log("open");
+    }
+    Keyboard.dismiss();
+  }, [isDrawerOpen]);
 
   return (
     <View style={{ flex: 1, marginTop: insets.top }}>
