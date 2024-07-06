@@ -40,9 +40,9 @@ const Page = () => {
   const [organization, setOrganization] = useMMKVString("org", Storage);
 
   const db = useSQLiteContext();
-  let { id } = useLocalSearchParams<{ id: string }>();
+  // let { id } = useLocalSearchParams<{ id: string }>();
 
-  const [chatId, _setChatId] = useState(id);
+  const [chatId, _setChatId] = useState<string>("");
   const chatIdRef = useRef(chatId);
 
   function setChatId(id: string) {
@@ -70,9 +70,8 @@ const Page = () => {
           return [...messages];
         }
 
-        if (payload.choices[0]?.finishReason) {
+        if (payload.choices[0]?.finishReason === null) {
           //Save last message to the DB
-
           addMessage(db, parseInt(chatIdRef.current!), {
             content: messages[messages.length - 1].content,
             role: Role.Bot,
@@ -96,6 +95,7 @@ const Page = () => {
       // Create chat later,store to DB
       addChat(db, message).then((res) => {
         const chatID = res.lastInsertRowId;
+        console.log("ChatId from get completion", chatID);
         setChatId(chatID.toString());
         addMessage(db, chatID, { content: message, role: Role.User });
       });
