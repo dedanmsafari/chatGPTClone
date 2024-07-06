@@ -1,11 +1,11 @@
-import { Message, Role } from "@/utils/types";
+import { Chat, Message, Role } from "@/utils/types";
 
 import { type SQLiteDatabase } from "expo-sqlite";
 import * as FileSystem from "expo-file-system";
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   //?logging DB for debugging
-  console.log("Where we store the files", FileSystem.documentDirectory);
+  // console.log("Where we store the files", FileSystem.documentDirectory);
 
   const DATABASE_VERSION = 1;
   let result = await db.getFirstAsync<{ user_version: number }>(
@@ -50,7 +50,7 @@ export const addChat = async (db: SQLiteDatabase, title: string) => {
 };
 
 export const getChats = async (db: SQLiteDatabase) => {
-  return await db.getAllAsync("SELECT * FROM chats");
+  return await db.getAllAsync<Chat>("SELECT * FROM chats");
 };
 
 export const deleteChat = async (db: SQLiteDatabase, chatId: number) => {
