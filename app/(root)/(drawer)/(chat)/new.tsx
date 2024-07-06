@@ -99,6 +99,11 @@ const Page = () => {
         setChatId(chatID.toString());
         addMessage(db, chatID, { content: message, role: Role.User });
       });
+    } else if (messages.length > 0) {
+      addMessage(db, parseInt(chatIdRef.current!), {
+        content: message,
+        role: Role.User,
+      });
     }
 
     setMessages([
