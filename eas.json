@@ -13,6 +13,11 @@
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./askmyai-428806-88f1f8b8410f.json",
+        "track": "internal"
+      }
+    }
   }
 }
