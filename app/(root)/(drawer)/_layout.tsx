@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Drawer } from "expo-router/drawer";
+import React, { useEffect, useState } from 'react';
+import { Drawer } from 'expo-router/drawer';
 import {
   View,
   Text,
@@ -10,35 +10,41 @@ import {
   useWindowDimensions,
   Keyboard,
   Alert,
-} from "react-native";
-import { Link, useNavigation, useRouter } from "expo-router";
-import { FontAwesome6, Ionicons } from "@expo/vector-icons";
-import Colors from "@/constants/Colors";
-import { DrawerActions } from "@react-navigation/native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+} from 'react-native';
+import { Link, useNavigation, useRouter } from 'expo-router';
+import { FontAwesome6, Ionicons } from '@expo/vector-icons';
+import Colors from '@/constants/Colors';
+import { DrawerActions } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   DrawerContentScrollView,
   DrawerItem,
   DrawerItemList,
   useDrawerStatus,
-} from "@react-navigation/drawer";
-import { TextInput } from "react-native-gesture-handler";
-import { useSQLiteContext } from "expo-sqlite";
-import Dialog from "react-native-dialog";
-import { deleteChat, getChats, renameChat } from "@/utils/Database";
-import { Chat } from "@/utils/types";
+} from '@react-navigation/drawer';
+import { TextInput } from 'react-native-gesture-handler';
+import { useSQLiteContext } from 'expo-sqlite';
+import Dialog from 'react-native-dialog';
+import {
+  deleteChat,
+  deleteMessages,
+  getChats,
+  renameChat,
+} from '@/utils/Database';
+import { Chat } from '@/utils/types';
+import uuid from 'react-native-uuid';
 
-import * as ContextMenu from "zeego/context-menu";
+import * as ContextMenu from 'zeego/context-menu';
 
 export const CustomDrawerContent = (props: any) => {
   const [history, setHistory] = useState<Array<Chat>>([]);
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [currentChatId, setCurrentChatId] = useState<null | number>(null);
-  const [newChatName, setNewChatName] = useState("");
+  const [newChatName, setNewChatName] = useState('');
 
   const insets = useSafeAreaInsets();
   const db = useSQLiteContext();
-  const isDrawerOpen = useDrawerStatus() === "open";
+  const isDrawerOpen = useDrawerStatus() === 'open';
   const router = useRouter();
 
   useEffect(() => {
@@ -50,32 +56,36 @@ export const CustomDrawerContent = (props: any) => {
 
   const loadChats = () => {
     getChats(db).then((results) => {
+      console.log('results from loadChat: ', results);
+
       setHistory(results);
     });
   };
 
   const onDeleteChat = async (id: number) => {
-    Alert.alert("Delete Chat", "Are you sure you want to delete this chat?", [
+    Alert.alert('Delete Chat', 'Are you sure you want to delete this chat?', [
       {
-        text: "Cancel",
-        style: "cancel",
+        text: 'Cancel',
+        style: 'cancel',
       },
       {
-        text: "Delete",
+        text: 'Delete',
         onPress: async () => {
           await deleteChat(db, id);
+          await deleteMessages(db, id);
           loadChats();
+          router.navigate('/(root)/(drawer)/(chat)/new');
         },
       },
     ]);
   };
 
   const onRenameChat = async (id: number) => {
-    console.warn("renaming:", id);
-    if (Platform.OS === "ios") {
+    console.warn('renaming:', id);
+    if (Platform.OS === 'ios') {
       Alert.prompt(
-        "Rename Chat",
-        "Enter a new name for the chat",
+        'Rename Chat',
+        'Enter a new name for the chat',
         async (newName) => {
           if (newName) {
             await renameChat(db, id, newName);
@@ -94,7 +104,7 @@ export const CustomDrawerContent = (props: any) => {
       await renameChat(db, currentChatId, newChatName);
       loadChats();
       setIsDialogVisible(false);
-      setNewChatName("");
+      setNewChatName('');
       setCurrentChatId(null);
     }
   };
@@ -103,7 +113,7 @@ export const CustomDrawerContent = (props: any) => {
     <View style={{ flex: 1, marginTop: insets.top }}>
       <View
         style={{
-          backgroundColor: "white",
+          backgroundColor: 'white',
           paddingBottom: 16,
         }}
       >
@@ -117,7 +127,7 @@ export const CustomDrawerContent = (props: any) => {
           <TextInput
             style={styles.searchInput}
             placeholder="Search"
-            underlineColorAndroid={"transparent"}
+            underlineColorAndroid={'transparent'}
             cursorColor={Colors.greyLight}
           />
         </View>
@@ -152,9 +162,9 @@ export const CustomDrawerContent = (props: any) => {
                       padding: 16,
                       height: 200,
                       width: 250,
-                      backgroundColor: "#fff",
-                      alignItems: "center",
-                      justifyContent: "center",
+                      backgroundColor: '#fff',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                   >
                     <Text>{chat.title}</Text>
@@ -168,7 +178,7 @@ export const CustomDrawerContent = (props: any) => {
                 <ContextMenu.ItemTitle>Rename</ContextMenu.ItemTitle>
                 <ContextMenu.ItemIcon
                   ios={{
-                    name: "pencil",
+                    name: 'pencil',
                     pointSize: 18,
                   }}
                 />
@@ -180,7 +190,7 @@ export const CustomDrawerContent = (props: any) => {
                 <ContextMenu.ItemTitle>Delete</ContextMenu.ItemTitle>
                 <ContextMenu.ItemIcon
                   ios={{
-                    name: "trash",
+                    name: 'trash',
                     pointSize: 18,
                   }}
                 />
@@ -194,7 +204,7 @@ export const CustomDrawerContent = (props: any) => {
         <Link href="/(root)/(modal)/settings" asChild>
           <TouchableOpacity style={styles.footer}>
             <Image
-              source={require("@/assets/images/robot.jpg")}
+              source={require('@/assets/images/robot.jpg')}
               style={styles.avatar}
             />
             <Text style={styles.userName}>Albon Mechatron</Text>
@@ -215,7 +225,7 @@ export const CustomDrawerContent = (props: any) => {
           label="Cancel"
           onPress={() => {
             setIsDialogVisible(false);
-            setNewChatName("");
+            setNewChatName('');
             setCurrentChatId(null);
           }}
         />
@@ -244,35 +254,37 @@ const _layout = () => {
         headerStyle: { backgroundColor: Colors.light },
         headerTitleStyle: {
           fontFamily: Platform.select({
-            android: "Ubuntu_500Medium",
-            ios: "Ubuntu-Medium",
+            android: 'Ubuntu_500Medium',
+            ios: 'Ubuntu-Medium',
           }),
         },
-        headerTitleAlign: "center",
+        headerTitleAlign: 'center',
         headerShadowVisible: false,
         drawerActiveBackgroundColor: Colors.selected,
-        drawerActiveTintColor: "#000",
-        drawerInactiveTintColor: "#000",
-        overlayColor: "rgba(0,0,0,0.2)",
+        drawerActiveTintColor: '#000',
+        drawerInactiveTintColor: '#000',
+        overlayColor: 'rgba(0,0,0,0.2)',
         drawerItemStyle: { borderRadius: 12 },
 
         drawerLabelStyle: {
           marginLeft: -20,
-          fontFamily: "PlaywritePL-Regular",
+          fontFamily: 'PlaywritePL-Regular',
         },
         drawerStyle: { width: dimensions.width * 0.86 },
       }}
     >
       <Drawer.Screen
         name="(chat)/new"
-        getId={() => Math.random().toString()}
+        getId={() => {
+          return uuid.v4().toString();
+        }}
         options={{
-          drawerLabel: "ChatGPT",
-          title: "ChatGPT",
+          drawerLabel: 'ChatGPT',
+          title: 'ChatGPT',
           drawerIcon: () => (
-            <View style={[styles.item, { backgroundColor: "#000" }]}>
+            <View style={[styles.item, { backgroundColor: '#000' }]}>
               <Image
-                source={require("@/assets/images/logo-white.png")}
+                source={require('@/assets/images/logo-white.png')}
                 style={styles.Image}
               />
             </View>
@@ -295,7 +307,7 @@ const _layout = () => {
         name="(chat)/[id]"
         options={{
           drawerItemStyle: {
-            display: "none",
+            display: 'none',
           },
           headerRight: () => (
             <Link href="/(root)/(drawer)/(chat)/new" push asChild>
@@ -314,14 +326,14 @@ const _layout = () => {
       <Drawer.Screen
         name="dalle"
         options={{
-          drawerLabel: "DALL · E",
+          drawerLabel: 'DALL · E',
 
-          title: "Generate Images",
+          title: 'Generate Images',
 
           drawerIcon: () => (
             <View style={styles.item}>
               <Image
-                source={require("@/assets/images/dalle.png")}
+                source={require('@/assets/images/dalle.png')}
                 style={styles.dalleImage}
               />
             </View>
@@ -341,7 +353,7 @@ const _layout = () => {
               <Ionicons
                 name="apps"
                 size={18}
-                color={"#000"}
+                color={'#000'}
                 style={{ margin: 6 }}
               />
             </View>
@@ -362,19 +374,19 @@ const styles = StyleSheet.create({
   },
   item: {
     borderRadius: 15,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   dalleImage: {
     width: 28,
     height: 28,
-    resizeMode: "cover",
+    resizeMode: 'cover',
   },
   searchSection: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginHorizontal: 12,
     height: 34,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: Colors.input,
     borderRadius: 10,
   },
@@ -386,12 +398,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingRight: 8,
     paddingLeft: 0,
-    alignItems: "center",
-    color: "#424242",
+    alignItems: 'center',
+    color: '#424242',
   },
   footer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 12,
   },
   avatar: {
@@ -402,6 +414,6 @@ const styles = StyleSheet.create({
   userName: {
     flex: 1,
     fontSize: 16,
-    fontFamily: "PlaywritePL-Regular",
+    fontFamily: 'PlaywritePL-Regular',
   },
 });
