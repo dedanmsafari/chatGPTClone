@@ -11,7 +11,7 @@ import {
   Keyboard,
   Alert,
 } from 'react-native';
-import { Link, useNavigation, useRouter } from 'expo-router';
+import { Link, router, useNavigation, useRouter } from 'expo-router';
 import { FontAwesome6, Ionicons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { DrawerActions } from '@react-navigation/native';
@@ -35,6 +35,7 @@ import { Chat } from '@/utils/types';
 import uuid from 'react-native-uuid';
 
 import * as ContextMenu from 'zeego/context-menu';
+import { useRevenueCat } from '@/providers/RevenueCat';
 
 export const CustomDrawerContent = (props: any) => {
   const [history, setHistory] = useState<Array<Chat>>([]);
@@ -239,6 +240,7 @@ const _layout = () => {
   const navigation = useNavigation();
   const dimensions = useWindowDimensions();
 
+  const { user } = useRevenueCat();
   return (
     <Drawer
       drawerContent={CustomDrawerContent}
@@ -338,6 +340,17 @@ const _layout = () => {
               />
             </View>
           ),
+        }}
+        listeners={{
+          drawerItemPress: (e) => {
+            e.preventDefault();
+            console.log('Dall.E');
+            if (user.dalle) {
+              router.navigate('/(root)/(drawer)/dalle');
+            } else {
+              router.navigate('/(root)/(modal)/purchases');
+            }
+          },
         }}
       />
       <Drawer.Screen
