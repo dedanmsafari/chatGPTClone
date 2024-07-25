@@ -32,9 +32,9 @@ const RevenueCatProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const init = async () => {
       if (Platform.OS === 'android') {
-        await Purchases.configure({ apiKey: APIKeys.google });
+        Purchases.configure({ apiKey: 'goog_MewyIBbYmewKpXAHDEDaylrNIAT' });
       } else {
-        await Purchases.configure({ apiKey: APIKeys.google });
+        Purchases.configure({ apiKey: 'appl_MewyIBbYmewKpXAHDEDaylrNIAT' });
       }
       setIsReady(true);
       //logging events
@@ -54,16 +54,21 @@ const RevenueCatProvider = ({ children }: PropsWithChildren) => {
 
   //load all offerings a user can (currently) purchase
   const loadOfferings = async () => {
-    const offerings = await Purchases.getOfferings();
-    if (offerings.current) {
-      setPackages(offerings.current.availablePackages);
+    try {
+      const offerings = await Purchases.getOfferings();
+      console.log(offerings);
+      if (offerings.current) {
+        setPackages(offerings.current.availablePackages);
+      }
+    } catch (e) {
+      console.log(JSON.stringify(e));
     }
   };
 
   //Update user state based on previous purchases
   const updateCustomerInformation = async (customerInfo: CustomerInfo) => {
     const newUser: UserState = { dalle: user.dalle };
-
+    console.log('customer info', customerInfo);
     if (customerInfo?.entitlements.active['DallE'] !== undefined) {
       newUser.dalle = true;
     }
@@ -74,13 +79,14 @@ const RevenueCatProvider = ({ children }: PropsWithChildren) => {
   const purchasePackage = async (pack: PurchasesPackage) => {
     try {
       await Purchases.purchasePackage(pack);
+      console.log('Purchasing:', pack.identifier);
       if (pack.identifier === 'dalle') {
         setUser({ dalle: true });
         Alert.alert('Success', 'You have unlocked DallE!');
       }
     } catch (e: any) {
       if (!e.userCancelled) {
-        alert(e);
+        Alert.alert('Error', e.message);
       }
     }
   };
