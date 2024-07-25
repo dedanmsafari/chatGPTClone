@@ -1,4 +1,5 @@
 module.exports = {
+  jsEngine: 'hermes',
   owner: 'dedan_msafari',
   name: 'chatGPTClone',
   slug: 'chatgptclone',
