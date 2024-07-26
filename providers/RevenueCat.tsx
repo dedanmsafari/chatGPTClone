@@ -56,19 +56,19 @@ const RevenueCatProvider = ({ children }: PropsWithChildren) => {
   const loadOfferings = async () => {
     try {
       const offerings = await Purchases.getOfferings();
-      console.log(offerings);
+      //   console.log(offerings);
       if (offerings.current) {
         setPackages(offerings.current.availablePackages);
       }
     } catch (e) {
-      console.log(JSON.stringify(e));
+      console.log('Error from offerings', JSON.stringify(e));
     }
   };
 
   //Update user state based on previous purchases
   const updateCustomerInformation = async (customerInfo: CustomerInfo) => {
     const newUser: UserState = { dalle: user.dalle };
-    console.log('customer info', customerInfo);
+    // console.log('customer info', customerInfo);
     if (customerInfo?.entitlements.active['DallE'] !== undefined) {
       newUser.dalle = true;
     }
@@ -77,6 +77,7 @@ const RevenueCatProvider = ({ children }: PropsWithChildren) => {
   };
 
   const purchasePackage = async (pack: PurchasesPackage) => {
+    console.log('Attempting to run purchases');
     try {
       await Purchases.purchasePackage(pack);
       console.log('Purchasing:', pack.identifier);
@@ -86,6 +87,7 @@ const RevenueCatProvider = ({ children }: PropsWithChildren) => {
       }
     } catch (e: any) {
       if (!e.userCancelled) {
+        console.log(JSON.stringify(e));
         Alert.alert('Error', e.message);
       }
     }
