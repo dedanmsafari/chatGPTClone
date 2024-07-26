@@ -18,7 +18,7 @@ const Purchases = () => {
   const { packages, purchasePackage } = useRevenueCat();
   const { bottom } = useSafeAreaInsets();
   const pack = packages.find((p) => p.identifier === 'dalle');
-
+  //   console.log('Pack:', pack);
   const router = useRouter();
 
   const purchaseDalle = async () => {
