@@ -57,7 +57,7 @@ export const CustomDrawerContent = (props: any) => {
 
   const loadChats = () => {
     getChats(db).then((results) => {
-      console.log('results from loadChat: ', results);
+      // console.log('results from loadChat: ', results);
 
       setHistory(results);
     });
@@ -344,7 +344,7 @@ const _layout = () => {
         listeners={{
           drawerItemPress: (e) => {
             e.preventDefault();
-            console.log('Dall.E');
+            // console.log('Dall.E');
             if (user.dalle) {
               router.navigate('/(root)/(drawer)/dalle');
             } else {
