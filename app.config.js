@@ -64,7 +64,8 @@ module.exports = {
     typedRoutes: true,
   },
   extra: {
-    clerkPublishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+    clerkPublishableKey: process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
+
     eas: {
       projectId: 'a99295f8-75c0-4384-b0ff-e8a2f8db9882',
     },
